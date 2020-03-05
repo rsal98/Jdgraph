@@ -1,0 +1,257 @@
+.leftPane {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 17.5vw;
+    background-color:#add8e6;
+    position: fixed;
+    height: 100vh;
+    overflow-x: hidden;
+    transition: .7s;
+  }
+  .list{
+      float: left;
+      width: 17.5vw;
+      color: white;
+      background-color: grey;
+      text-align: left;
+      overflow-x: hidden;
+      transition: .5s;
+    }
+    .out:hover{
+      color: white;
+    }
+
+  li a {
+    display: block;
+    padding: 1vw 2vw;
+    text-decoration: none;
+
+  }
+
+  li a:hover {
+    background-color:black;
+    color: white;
+    cursor: pointer;
+  }
+
+.leftSide{
+    /* height: 100%; */
+    width: 17.5vw;
+    position: fixed;
+    z-index: 1;
+    top: 4.5vw;
+    overflow-x: hidden;
+    left:0;
+    font-family: 'Acme', sans-serif;
+    font-size: 1vw;
+}
+.rightSide{
+    height: 100%;
+    width: 82.5vw;
+    position: fixed;
+    z-index: 1;
+    top: 2vw;
+    overflow-y:scroll;
+    padding-top: 0.5vw;
+    padding-left: 5vw;
+    right:0;
+    text-align: center;
+    margin-top: 5vw;
+    transition: .7s;
+}
+
+.innerLeft{
+  width: 32vw;
+  position: fixed;
+  z-index: 1;
+  height: 100%;
+  border-right: 0.2px solid lightgray;
+}
+.innerLeft1{
+  width: 40vw;
+  position: fixed;
+  z-index: 1;
+  border-right: 0.2px solid lightgray;
+  left: 20vw;
+}
+
+form{
+  font-family: Arial, Helvetica, sans-serif;
+}
+.innerRight{
+  width: 40vw;
+  position: fixed;
+  z-index: 1;
+  right: 0;
+  overflow-y: scroll;
+  font-family: Arial, Helvetica, sans-serif;
+  transition: 0.5s;
+}
+
+th{
+  font-family: 'Acme', sans-serif;
+}
+h1{
+  font-family: 'Acme', sans-serif;
+}
+.myForm{
+  min-width: 40vw;
+  text-align: left;
+  display: inline-block;
+}
+.formDiv{
+    padding-top: 2vw;
+}
+.hideButton{
+  cursor: pointer; 
+  bottom:5vw; 
+  left: 1vw;
+  position: absolute;
+  font-size: 3vw;
+}
+.rad{
+  padding-top: 20px;
+  width: auto;
+  text-align: left;
+}
+
+.padBot{
+    padding-bottom: 2vw;
+}
+
+.myNav{
+  background-color: black;
+  height: 4.5vw;
+}
+
+.Main{
+  font-size: 1.5vw;
+  color:white;
+  font-family: 'Bangers', cursive;
+  float: left;
+}
+
+::-webkit-input-placeholder {
+  text-align: center;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+  text-align: center;  
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+  text-align: center;  
+}
+
+:-ms-input-placeholder {  
+  text-align: center; 
+}
+
+.error{
+  color: green;
+  float: left;
+}
+
+.textWid{
+  width: 20vw; 
+}
+
+input{
+  text-align: center;
+} 
+
+.hmm{
+  padding-top: 4vw;
+  font-family: 'Bangers', cursive;
+  font-size: 10vw;
+}
+
+.out{
+  color: white;
+  font-family: 'Bangers', cursive;
+  font-size: 1.5vw;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.display{
+  padding-top: 30px;
+  padding-right: 40px;
+  text-align: center;
+  color: red;
+}
+
+.drop{
+  background-color: black;
+}
+
+.isSelected{
+  background-color: black;
+  color: white;
+}
+
+.box{
+  width: 550px;
+  text-align: left;
+  padding-right: 10px;
+}
+
+.col1{
+  width: 240px;
+}
+
+.example-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+}
+
+td {
+  padding-right: 8px;
+}
+
+.border{
+  border: 0.1cm;
+  color: red;
+}
+.mynetwork {
+  width: 600px;
+  height: 600px;
+  border: 1px solid lightgray;
+  transition: 0.5s;
+}
+
+.terminal{
+  background: black;
+  color: white;
+  width: 70vw;
+  height: 70vh;
+  overflow-y: scroll;
+  text-align: left;
+  transition: 0.7s;
+}
+.queryterminal{
+  background: black;
+  color: white;
+  width: 82.5vw;
+  height: 40vh;
+  /* text-align: left; */
+  transition: 0.7s;
+  bottom: 0;
+  left: 0;
+  position:absolute;
+  text-align: center;
+}
+
+.notch{
+  height: 4vh;
+  width: 7vw;
+  background-color:grey;
+  display: inline-block; 
+  margin: 0 auto;
+  border-radius: 0 0 10px 10px;
+  color: black;
+  font-size: 1.3vw;
+}
+

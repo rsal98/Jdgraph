@@ -1,0 +1,811 @@
+<div [@fadeIn]=currentState>
+    <div>
+        <nav class="navbar myNav">
+            <a class="out" style="text-decoration: none;" ><label (click)="collapse()" style="padding-right: 1vw;">&#9776;</label>Jdgraph</a>
+            <!-- <a *ngIf="showArrow" class="Main" style="color: white; text-decoration: none;cursor: pointer" (click)="uncollapse()" ><h1>→</h1></a> -->
+            <a class="out" (click)="logOff()">SignOut</a>
+        </nav>
+    </div>
+    <div class="leftSide" *ngIf="adminAccess">
+        <ul class="leftPane" id="LeftSide">
+            <li><a (click)="showUser()" class={{jj}}>&#9776;User</a></li>
+            <div class="list" id="LeftSideMenu" *ngIf="showUserOp">
+                <li *ngFor="let operation of adminOperations" (click)="onClick(operation)">
+                    <a>{{operation}}</a>
+                </li>
+            </div>
+            <li><a (click)="showGroup()" class={{tt}}>&#9776;Group</a></li>
+            <div *ngIf="showGroupOp">
+                <li class="list" *ngFor="let operation of groupOperations" (click)="onClick(operation)">
+                    <a>{{operation}}</a>
+                </li>
+            </div>
+            <!-- <div (click)="collapse()" class="hideButton">←</div> -->
+        </ul>
+    </div>
+    <div class="leftSide"  *ngIf="!adminAccess">
+        <ul class="leftPane" id="LeftSide">
+            <li><a (click)="showUserOperations()" class={{jj}}>&#9776;Operations</a></li>
+            <div class="list" id="LeftSideMenu" *ngIf="userOp">
+                <li  *ngFor="let operation of userOperations" (click)="onClick(operation)">
+                    <a>{{ operation }}</a>
+                </li>
+            </div>
+            <!-- <div style="cursor: pointer" (click)="collapse()" class="hideButton"><h1>←</h1></div> -->
+        </ul>   
+    </div>
+    <div class="rightSide" id="RightSide">
+        <!-- <div *ngIf="showArrow" style="float: left;cursor: pointer; margin-top: 0.5vw;margin-left: 0.5vw;"(click)="uncollapse()" ><h1>→</h1></div> -->
+        <div [ngSwitch]="action">
+            <div *ngSwitchCase="'Create New User'">
+                <div class="innerLeft1">
+                    <div class="myForm">
+                        <h1 style="float: left;padding-left: 3vw;">Enter User Info</h1>
+                        <form #userForm="ngForm" class="textWid" (ngSubmit)="onSubmit()">
+                            <div class="col">
+                                <div class="formDiv">
+                                    <input type="text" required #name="ngModel" [(ngModel)]="userCred.userid" [class.is-invalid]="name.invalid && name.touched"  class="form-control" name="userId" placeholder="User Id">
+                                    <div *ngIf="name.invalid && (name.dirty || name.touched)" class="error">
+                                        <div *ngIf="name.errors.required">
+                                            User Id is required
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="formDiv">
+                                    <input type="password" required #userPass="ngModel" minlength="6" [(ngModel)]="userCred.pass" class="form-control" [class.is-invalid]="userPass.invalid && userPass.touched" name="userPass" placeholder="Password" ngModel>
+                                    <div *ngIf="userPass.invalid && (userPass.dirty || userPass.touched)" class="error">
+                                        <div *ngIf="userPass.errors.required">
+                                            Password is required.
+                                        </div>
+                                        <div *ngIf="userPass.errors.minlength">
+                                            Password must be at least 6 characters long.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="formDiv padBot">
+                                    <input type="password" required #reuserPass="ngModel" [(ngModel)]="userCred.repass" [class.is-invalid]="reuserPass.invalid && reuserPass.touched" class="form-control" name="reuserPass" placeholder="Confirm Password" ngModel>
+                                    <div *ngIf="reuserPass.invalid && (reuserPass.dirty || reuserPass.touched)" class="error">
+                                        <div *ngIf="reuserPass.errors.required">
+                                             ReType the password
+                                        </div>
+                                    </div>                       
+                                </div>
+                            </div>
+                            <button [disabled]="userForm.form.invalid" type="submit" class="btn btn-primary btn-lg">Submit</button>
+                            <div *ngIf="userStatus" class="error">
+                                {{showMessage}}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="innerRight"> 
+                    <div *ngIf="showUserMessage" class="display">
+                        <table class="table table-trapped">
+                            <thead>
+                                <th *ngFor="let q of theads">
+                                    <h2>{{q}}</h2>
+                                </th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td  *ngFor="let data of tvalues">
+                                        {{data}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div *ngSwitchCase="'Delete User'">
+                <div class="innerLeft1">
+                    <div class="myForm" class="textWid">
+                        <form #userForm="ngForm" class="textWid" (ngSubmit)="onDelete()">
+                            <h1>Enter User Id</h1>
+                            <div class="col">
+                                <div class="formDiv padBot">
+                                    <input type="text" required #name="ngModel" [(ngModel)]=forDelete.userid [class.is-invalid]="name.invalid && name.touched"  class="form-control" name="userId" placeholder="User Id" ngModel>
+                                    <small [class.d-none]="name.valid || name.untouched" class="error">UserId is required</small>
+                                </div>
+                            </div>
+                            <button [disabled]="userForm.form.invalid" type="submit" class="btn btn-primary btn-lg">Submit</button>
+                        </form>
+                    </div>
+                </div>    
+                <div class="innerRight">
+                    <div *ngIf="deleteStatus">
+                        <table class="table table-trapped">
+                            <thead>
+                                <th *ngIf="showUid"> 
+                                    UID
+                                </th>
+                                <th>
+                                    UserId
+                                </th>
+                                <th>
+                                    Status
+                                </th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td *ngIf="showUid">
+                                        {{uid}}
+                                    </td>
+                                    <td>
+                                        {{forDelete.userid}}
+                                    </td>
+                                    <td>
+                                        {{deleteMessage}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div *ngSwitchCase="'Show User Info'">
+                <div class="innerLeft1">
+                    <div class="myForm">
+                        <form #userForm="ngForm" class="textWid" (ngSubmit)="userInfo()">
+                            <h1>Enter User Id</h1>
+                            <div class="col">
+                                <div class="formDiv padBot">
+                                    <input type="text" required #name="ngModel" [(ngModel)]="forDelete.userid" [class.is-invalid]="name.invalid && name.touched"  class="form-control" name="userId" placeholder="User Id" ngModel>
+                                    <small [class.d-none]="name.valid || name.untouched" class="error">UserId is required</small>
+                                </div>
+                            </div>
+                            <button [disabled]="userForm.form.invalid" type="submit" class="btn btn-primary btn-lg">Submit</button>
+                        </form>
+                    </div>
+                    <div *ngIf="showUserMessage" class="display">
+                        <div *ngFor="let q of userMessage">
+                            {{q}}
+                        </div>
+                    </div>
+                </div>
+                <div class="innerRight"> 
+                    <div *ngIf="show" class="display">
+                        <table class="table table-trapped">
+                            <thead>
+                                <th *ngFor="let q of theads">
+                                    <h2>{{q}}</h2>
+                                </th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td  *ngFor="let data of tvalues">
+                                        {{data}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div *ngSwitchCase="'Update User Password'">
+                <div class="innerLeft1">    
+                    <div class="myForm">
+                        <h1 style="float: left;padding-left: 3vw;">Enter User Info</h1>
+                        <form #userForm="ngForm" class="textWid" (ngSubmit)="onUpdate()">
+                            <div class="col">
+                                <div class="formDiv">
+                                    <input type="text" required #name="ngModel" [(ngModel)]="userCred.userid" [class.is-invalid]="name.invalid && name.touched"  class="form-control" name="userId" placeholder="User Id">
+                                    <div *ngIf="name.invalid && (name.dirty || name.touched)" class="error">
+                                        <div *ngIf="name.errors.required">
+                                            User Id is required
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="formDiv">
+                                    <input type="password" required #userPass="ngModel" minlength="6" [(ngModel)]="userCred.pass" class="form-control" [class.is-invalid]="userPass.invalid && userPass.touched" name="userPass" placeholder="Enter New Password" ngModel>
+                                    <div *ngIf="userPass.invalid && (userPass.dirty || userPass.touched)" class="error">
+                                        <div *ngIf="userPass.errors.required">
+                                            Password is required.
+                                        </div>
+                                        <div *ngIf="userPass.errors.minlength">
+                                            Password must be at least 6 characters long.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="formDiv padBot">
+                                    <input type="password" required #reuserPass="ngModel" [(ngModel)]="userCred.repass" [class.is-invalid]="reuserPass.invalid && reuserPass.touched" class="form-control" name="reuserPass" placeholder="Confirm Password" ngModel>
+                                    <div *ngIf="reuserPass.invalid && (reuserPass.dirty || reuserPass.touched)" class="error">
+                                        <div *ngIf="reuserPass.errors.required">
+                                             ReType the password
+                                        </div>
+                                    </div>                       
+                                </div>
+                                <button [disabled]="userForm.form.invalid" type="submit" class="btn btn-primary btn-lg">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="innerRight">
+                    <div *ngIf="showUpdateMessage">
+                        <table class="table table-trapped">
+                            <thead>
+                                <th>
+                                    <h2>UserId</h2>
+                                </th>
+                                <th>
+                                    <h2>Status</h2>
+                                </th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        {{userCred.userid}}
+                                    </td>
+                                    <td>
+                                        {{updateMessage}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>        
+            <div *ngSwitchCase="'Create New Group'">
+                <div class="innerLeft1">
+                    <div class="myForm">
+                        <form #userForm="ngForm" class="textWid" (ngSubmit)="forGroupCred()">
+                            <h1>Enter Group Info</h1>
+                            <div class="col">
+                                <div class="formDiv">
+                                    <input type="text" required #name="ngModel" [(ngModel)]="groupCred.groupId" [class.is-invalid]="name.invalid && name.touched"  class="form-control" name="groupId" placeholder="Group Id" ngModel>
+                                    <small [class.d-none]="name.valid || name.untouched" class="error">GroupId is required</small>
+                                </div>
+                                <div class="rad box">
+                                    Permissions:
+                                    <input type="checkbox" [(ngModel)]="groupCred.readPermi" name="readPermi" ngModel>Read
+                                    <input type="checkbox" [(ngModel)]="groupCred.writePermi" name="writePermi" ngModel>Write 
+                                    <input type="checkbox" [(ngModel)]="groupCred.modifyPermi"name="modifyPermi" ngModel>Modify
+                                </div>
+                                <div class="formDiv padBot">
+                                    <input type="text" required #predName="ngModel" [(ngModel)]="groupCred.predName" [class.is-invalid]="predName.invalid && predName.touched"  class="form-control" name="predName" placeholder="Predicate Name" ngModel>
+                                    <small [class.d-none]="predName.valid || predName.untouched" class="error">Predicate Name is required</small>
+                                </div>
+                            </div>
+                            <button [disabled]="userForm.form.invalid" type="submit" class="btn btn-primary btn-lg">Submit</button>
+                        </form>
+                        <div *ngIf="showGroupStatus" class="error">
+                            {{groupMessage}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngSwitchCase="'Delete Group'">
+                <div class="innerLeft1">
+                    <div class="myForm" class="textWid">
+                        <form #userForm="ngForm" class="textWid" (ngSubmit)="groupDelete()">
+                            <h1>Enter Group Id</h1>
+                            <div class="col">
+                                <div class="formDiv padBot">
+                                    <input type="text" required #name="ngModel" [(ngModel)]=groupInfo.groupId [class.is-invalid]="name.invalid && name.touched"  class="form-control" name="userId" placeholder="User Id" ngModel>
+                                    <small [class.d-none]="name.valid || name.untouched" class="error">GroupId is required</small>
+                                </div>
+                            </div>
+                            <button [disabled]="userForm.form.invalid" type="submit" class="btn btn-primary btn-lg">Submit</button>
+                        </form>
+                        <div *ngIf="groupDelete" class="error">
+                            {{groupDeleteMessage}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngSwitchCase="'Assign User to Group'">
+                <div class="innerLeft1">
+                    <div class="myForm" class="textWid">
+                        <form #userForm="ngForm" class="textWid" (ngSubmit)="assignGroup()">
+                            <h1>Enter Info</h1>
+                            <div class="col">
+                                <div class="formDiv">
+                                    <input type="text" required #name="ngModel" [(ngModel)]=assignUser.userId [class.is-invalid]="name.invalid && name.touched"  class="form-control" name="userId" placeholder="User Id" ngModel>
+                                    <small [class.d-none]="name.valid || name.untouched" class="error">GroupId is required</small>
+                                </div>
+                                <div class="formDiv padBot">
+                                    <input type="text" required #groupId="ngModel" [(ngModel)]=assignUser.groupId [class.is-invalid]="groupId.invalid && groupId.touched"  class="form-control" name="groupId" placeholder="Group Id" ngModel>
+                                    <small [class.d-none]="groupId.valid || groupId.untouched" class="error">GroupId is required</small>
+                                </div>
+                            </div>
+                            <button [disabled]="userForm.form.invalid" type="submit" class="btn btn-primary btn-lg">Submit</button>
+                        </form>
+                        <div *ngIf="assignStatus" class="error">
+                            {{assignMessage}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngSwitchCase="'Group Info'">
+                <div class="innerLeft1">
+                    <div class="myForm">
+                        <form #userForm="ngForm" class="textWid" (ngSubmit)="showGroupInfo()">
+                            <h1>Enter Group Id</h1>
+                            <div class="col">
+                                <div class="formDiv padBot">
+                                    <input type="text" required #name="ngModel" [(ngModel)]="groupData.groupId" [class.is-invalid]="name.invalid && name.touched"  class="form-control" name="userId" placeholder="User Id" ngModel>
+                                    <small [class.d-none]="name.valid || name.untouched" class="error">GroupId is required</small>
+                                </div>
+                            </div>
+                            <button [disabled]="userForm.form.invalid" type="submit" class="btn btn-primary btn-lg">Submit</button>
+                        </form>
+                        <div *ngIf="showGroupIn" class="display">
+                            <ul style="list-style-type: none;">
+                                <li *ngFor="let message of groupInfoMessage">
+                                    {{ message }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngSwitchCase="'Add Schema'">
+                <div class="myForm">
+                    <h1>Enter Schema Details</h1>
+                    <form (ngSubmit)="onSubmitSchema()">
+                        <div *ngFor="let obj of dataarray; let i=index">
+                                <form class="example-full-width myForm" ><tr>
+                                    <td><mat-form-field class="example-full-width">
+                                    <input matInput placeholder="Predicate" name="predicate{{i}}" [(ngModel)]="obj.predicate">
+                                    </mat-form-field></td>
+    
+                                    <td><mat-form-field class="example-full-width">
+                                        <mat-label >Type</mat-label>
+                                        <mat-select name="attrtype{{i}}" [(ngModel)]="obj.attrtype">
+                                            <mat-option *ngFor="let type of types"
+                                            value="{{type.id}}">{{type.name}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field></td>
+                                    
+                                    <td><div *ngIf="obj.attrtype!='password'" class="example-full-width">
+                                        <mat-checkbox  name="list{{i}}" [(ngModel)]="obj.list">List </mat-checkbox>
+                                    </div></td>
+    
+                                    <td><div *ngIf="obj.attrtype!='password' && obj.list==true" class="example-full-width">
+                                        <mat-checkbox name="count{{i}}" [(ngModel)]="obj.count">count</mat-checkbox>
+                                    </div></td>
+    
+                                    <td><div *ngIf="obj.attrtype!='password' && obj.attrtype!='uid'" class="example-full-width">
+                                        <mat-checkbox name="index{{i}}" [(ngModel)]="obj.index">index</mat-checkbox>
+                                    </div></td>
+    
+                                    <td><div *ngIf="obj.attrtype!='password' && obj.attrtype!='uid' && obj.index==true" class="example-full-width">
+                                        <mat-checkbox name="upsert{{i}}" [(ngModel)]="obj.upsert">upsert</mat-checkbox>
+                                    </div></td>
+    
+                                    <td><div *ngIf="obj.attrtype=='uid'" class="example-full-width">
+                                        <mat-checkbox name="reverse{{i}}" [(ngModel)]="obj.reverse">reverse</mat-checkbox>
+                                    </div></td>
+    
+                                    <td><div *ngIf="obj.attrtype=='string'" class="example-full-width">
+                                        <mat-checkbox name="lang{{i}}" [(ngModel)]="obj.lang">lang</mat-checkbox>
+                                    </div></td>
+    
+                                    <td><mat-radio-group  *ngIf="obj.attrtype=='daytime' && obj.index==true"  name="daytimevalue{{i}}" [(ngModel)]="obj.daytimevalue">
+                                        <mat-radio-button value="year">year</mat-radio-button>
+                                        <mat-radio-button value="month">month</mat-radio-button>
+                                        <mat-radio-button value="day">day</mat-radio-button>
+                                        <mat-radio-button value="hour">hour</mat-radio-button>
+                                    </mat-radio-group></td>
+    
+                                    <td><mat-radio-group  *ngIf="obj.attrtype=='string' && obj.index==true"  name="stringindexval{{i}}" [(ngModel)]="obj.stringindexval">
+                                        <mat-radio-button value="exact">exact</mat-radio-button>
+                                        <mat-radio-button value="hash">hash</mat-radio-button>
+                                        <mat-radio-button value="term">term</mat-radio-button>
+                                    </mat-radio-group></td>
+    
+                                    <td><div *ngIf="obj.attrtype=='string' && obj.index==true" class="example-full-width">
+                                        <mat-checkbox name="fulltext{{i}}" [(ngModel)]="obj.fulltext">fulltext</mat-checkbox>
+                                    </div></td>
+    
+                                    <td><div *ngIf="obj.attrtype=='string' && obj.index==true" class="example-full-width">
+                                        <mat-checkbox name="trigram{{i}}" [(ngModel)]="obj.trigram">trigram</mat-checkbox>
+                                    </div></td>
+    
+                                    <td><div *ngIf="i!=0" class="example-full-width">
+                                        <span (click)="removeData(i)" class=" btn btn-danger">-</span>
+                                    </div></td>
+    
+                                </tr>
+                            </form> 
+                        </div>
+                        <span (click)="onAdd()" class=" btn btn-success">+</span>
+                        <button class="btn btn-primary">Submit</button>
+                    </form>
+                    <div><h2>{{schemaMessage}}</h2></div>
+                </div>
+                <div >
+                    <table class="table table-trapped">
+                        <thead>
+                            <th>
+                                <h2>Predicates</h2>
+                            </th>
+                            <th>
+                                <h2>Data Type</h2>
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let muta of mutation; let i=index">
+                                <td>
+                                    {{mutation[i]}}
+                                </td>
+                                <td>
+                                    {{mutationtype[i]}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div (click)="tCollapse()" class="queryterminal" id="qTerminal" >
+                    <div class="notch"> 
+                        console <label style="font-size: 1.5vw;">{{symbol}}</label>
+                    </div>
+                    <div *ngFor="let message of schemaMessaget">
+                        {{message}}
+                    </div>
+                </div>
+            </div>
+            <div *ngSwitchCase="'Define Type'">
+                <div class="myForm">
+                    <h1>Define Types</h1>
+                    <form  #typeForm="ngForm" (ngSubmit)="onSubmitType(typeForm)" >
+    
+                        <div>
+                            <td><mat-form-field class="example-full-width">
+                                    <input matInput placeholder="Define a type" name="typevalue" id="typevalue" ngModel>
+                                </mat-form-field>
+                            </td>
+                        </div>
+                        
+                        <hr />
+                        <tr>
+                        <div  *ngFor="let muta of mutation; let j=index">
+                            <td> 
+                                <mat-checkbox style="padding-right: 2vw;"  name="r{{mutation[j]}}" id="r{{mutation[j]}}"  ngModel>{{mutation[j]}}</mat-checkbox>
+                                <mat-form-field *ngIf="mutationtype[j]=='uid'" class="example-full-width">
+                                    <input matInput placeholder="Choose type" name="u{{mutation[j]}}" id="u{{mutation[j]}}" ngModel>
+                                </mat-form-field>
+                            </td>
+                        </div>
+                        </tr>
+                        <div class="formDiv">
+                            <button class="btn btn-primary" >Submit</button>
+                        </div>
+                    </form>
+                    <div><h2>{{typeMessage}}</h2></div>
+                </div>
+                <div (click)="tCollapse()" class="queryterminal" id="qTerminal" >
+                    <div class="notch"> 
+                        console <label style="font-size: 1.5vw;">{{symbol}}</label>
+                    </div>
+                    <div *ngFor="let message of typeMessaget">
+                        {{message}}
+                    </div>
+                </div>
+            </div>
+            <div *ngSwitchCase="'Add Data'">
+                <div class="myForm">
+                    <h1>Enter Data</h1>
+                    <form  #mutationForm="ngForm" class="textWid" (ngSubmit)="onSubmitMutation(mutationForm)">
+                        <div class="border" *ngFor="let obj of mutationdata; let i=index">
+                            <div class="example-full-width" *ngFor="let muta of mutation; let j=index">
+                            <div class="col">
+                                <div class="formDiv" *ngIf="mutationtype[j]!='uid'">
+                                    <input class="form-control" name="{{i}}{{mutation[j]}}" id="{{i}}{{mutation[j]}}" placeholder="{{mutation[j]}}" ngModel>
+                                </div>
+                            </div>    
+                            </div>
+                            <td><div *ngIf="i!=0" class="example-full-width">
+                                <span (click)="removeDatam(i)" class=" btn btn-danger">-</span>
+                            </div></td>         
+                        </div>
+                           
+                        <div class="formDiv">
+                            <span (click)="onAddm()" class=" btn btn-success">Follows</span>
+                            <button class="btn btn-primary" >Submit</button>
+                        </div>
+                    </form>
+                    <div><h2>{{mutationMessage}}</h2></div>
+                </div>
+                <div (click)="tCollapse()" class="queryterminal" id="qTerminal" >
+                    <div class="notch"> 
+                        console <label style="font-size: 1.5vw;">{{symbol}}</label>
+                    </div>
+                    <div *ngFor="let message of mutationMessaget">
+                        {{message}}
+                    </div>
+                </div>
+            </div>
+            <div *ngSwitchCase="'Add Data Using Type'">
+                <div class="myForm">
+                    <h1>Enter Data</h1>     
+                    <form  #tmutationForm="ngForm" class="example-full-width" (ngSubmit)="onSubmitTMutation(tmutationForm)">
+                        <div class="border" *ngFor="let obj of mutationtdata; let i=index"><tr>
+                            <h5>{{i}}</h5>
+                            <td><div>
+                                <td><mat-form-field class="example-full-width">
+                                    <mat-label >Choose type</mat-label>
+                                    <mat-select name="{{i}}typevalue" id="{{i}}typevalue" ngModel>
+                                        <mat-option *ngFor="let type of mutationclasstype; let l=index"
+                                       value ="{{mutationclasstype[l]}}">{{mutationclasstype[l]}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field></td>
+                            </div></td>
+                            <div class="example-full-width" *ngFor="let muta of mutation; let j=index">
+                            
+                            <div class=" example-full-width" *ngIf="mutationtype[j]=='uid'">
+                                <td><mat-form-field class="example-full-width">
+                                    <mat-label >{{mutation[j]}} </mat-label>
+                                    <mat-select name="{{i}}{{mutation[j]}}" id="{{i}}{{mutation[j]}}" ngModel>
+                                        <mat-option *ngFor="let x of [].constructor(hmm); let k=index"
+                                        value="{{k}}">{{k}}</mat-option>
+                                    </mat-select> 
+                                </mat-form-field></td>
+                            </div>
+                            <div class=" example-full-width" *ngIf="mutationtype[j]!='uid'">
+                                <input class="form-control" name="{{i}}{{mutation[j]}}" id="{{i}}{{mutation[j]}}" placeholder="{{mutation[j]}}" ngModel>
+                            </div>
+                               
+                            </div>
+                            <td><div *ngIf="i!=0" class="example-full-width">
+                                <span (click)="removeDatatm(i)" class=" btn btn-danger">-</span>
+                            </div></td>
+                            </tr>
+                        </div>
+                           
+                        <div class="example-full-width">
+                            <span (click)="onAddtm()"  class=" btn btn-success">+</span>
+                            <button class="btn btn-primary" >Submit</button>
+                        </div>
+                    </form>
+                    <div><h2>{{tmutationMessage}}</h2></div>
+                </div>
+                <div (click)="tCollapse()" class="queryterminal" id="qTerminal" >
+                    <div class="notch"> 
+                        console <label style="font-size: 1.5vw;">{{symbol}}</label>
+                    </div>
+                    <div *ngFor="let message of tMutationMessaget">
+                        {{message}}
+                    </div>
+                </div>
+            </div>
+            <div *ngSwitchCase="'Make Edges'">
+                <div class="myForm">
+                    <form #edgeForm="ngForm" (ngSubmit)="onSubmitEdge(edgeForm)">
+                        <td><mat-form-field class="example-full-width">
+                            <mat-label >Select Node 1 </mat-label>
+                            <mat-select name="Node1" id="Node1" ngModel>
+                                <mat-option *ngFor="let type of edgeQuerydata; let i=index"
+                                value="{{edgeQueryuid[i]}}">{{edgeQuerydata[i]}}
+                               </mat-option>
+                            </mat-select>  
+                        </mat-form-field></td>
+
+                        <td><mat-form-field class="example-full-width">
+                            <mat-label >Select connection type</mat-label>
+                            <mat-select name="ctype" id="ctype" ngModel>
+                                <div *ngFor="let muta of mutation;let i=index">
+                                <mat-option *ngIf="mutationtype[i]=='uid'"
+                                value="{{mutation[i]}}">{{mutation[i]}}
+                               </mat-option>
+                                </div>
+                            </mat-select>  
+                        </mat-form-field></td>
+
+                        <td><mat-form-field class="example-full-width">
+                            <mat-label >Select Node 2 </mat-label>
+                            <mat-select name="Node2" id="Node2" ngModel>
+                                <mat-option *ngFor="let type of edgeQuerydata; let i=index"
+                                value="{{edgeQueryuid[i]}}">{{edgeQuerydata[i]}}
+                               </mat-option>
+                            </mat-select>  
+                        </mat-form-field></td>
+
+                        <button class="btn btn-primary">Submit</button>
+                    </form>
+                    <div><h2>{{edgeMessage}}</h2></div>
+                    <div (click)="tCollapse()" class="queryterminal" id="qTerminal" >
+                        <div class="notch"> 
+                            console <label style="font-size: 1.5vw;">{{symbol}}</label>
+                        </div>
+                            {{edgeMessaget}}
+                    </div>
+                </div>
+            </div>
+            <div *ngSwitchCase="'Query'">
+                <div class="innerLeft">
+                    <form #queryForm="ngForm" (ngSubmit)="onSubmitQuery(queryForm)">
+                        <h1>Query Format</h1>
+                        <div>
+                            <td><mat-form-field class="example-full-width">
+                                <mat-label >Query type </mat-label>
+                                <mat-select name="qtype" id="qtype" ngModel>
+                                    <mat-option *ngFor="let type of qtypes"
+                                    value="{{type.id}}">{{type.name}}</mat-option>
+                                </mat-select>  
+                            </mat-form-field></td>
+                        </div>
+                        <div>
+                            <td><mat-form-field class="example-full-width">
+                                <mat-label >choose predicate</mat-label>
+                                <mat-select name="comparator" id="comparator" ngModel>
+                                    <div *ngFor="let muta of mutation;let i=index">
+                                    <mat-option *ngIf="mutationtype[i]!='uid'"
+                                    value="{{mutation[i]}}">{{mutation[i]}}
+                                    </mat-option>
+                                    </div>
+                                </mat-select>
+                            </mat-form-field></td>
+                        </div>
+                        <div>
+                            <td><mat-form-field *ngIf="qtype!='has'" class="example-full-width">
+                                    <input matInput placeholder="Input value" name="inputvalue" id="inputvalue" ngModel>
+                                </mat-form-field>
+                            </td>
+                        </div>
+                       <hr/>
+                       <h1>Value to be returned</h1>
+                       <div class="example-full-width" *ngFor="let muta of mutation; let j=index">
+                            <td> <div class="example-full-width " >
+                                <mat-checkbox  name="r{{mutation[j]}}" id="r{{mutation[j]}}" ngModel>{{mutation[j]}}</mat-checkbox>
+                                </div>
+                            </td>
+                        </div>    
+                        <button class="btn btn-primary">Submit</button>
+                    </form>        
+                </div>
+                <div class="innerRight" id="InnerRight">
+                    <h1>Query Output</h1>
+                    <td><div (click)="displayopt('graph')">Graph</div></td>
+                    <td><div (click)="displayopt('table')">Table</div></td>
+                    <div [ngSwitch]="display">
+                        <div *ngSwitchCase="'graph'">
+                            <div class="mynetwork" id="mynetwork"></div>
+                        </div>
+                        <div *ngSwitchCase="'table'">
+                            <table class="table table-trapped">
+                                <thead>
+                                    <th *ngFor="let q of queryreturnval; let i=index">
+                                        <h2>{{q}}</h2>
+                                    </th>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let data of queryansfinal; let j=index">
+                                        <td *ngFor="let q of queryreturnval; let i=index">
+                                            <div *ngIf="queryreturntype[i]!='uid'">{{queryansfinal[j][queryreturnval[i]]}}</div>
+                                            <div *ngIf="queryreturntype[i]=='uid' && queryansfinal[j][queryreturnval[i]]!=undefined">
+                                                <div *ngFor="let s of queryreturnval; let k=index">
+                                                    <div *ngIf="queryreturntype[k]!='uid' ">
+                                                        {{queryansfinal[j][queryreturnval[i]][0][queryreturnval[k]]}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td> 
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngSwitchCase="'Upsert'">
+                <form #upsertForm="ngForm" (ngSubmit)="onSubmitUpsert(upsertForm)">
+                    <label>Query block</label>
+                    <td><mat-form-field class="example-full-width">
+                        <mat-label >choose predicate</mat-label>
+                        <mat-select name="comparator" id="comparator" ngModel>
+                            <div *ngFor="let muta of mutation;let i=index">
+                            <mat-option *ngIf="mutationtype[i]!='uid'"
+                            value="{{mutation[i]}}">{{mutation[i]}}
+                            </mat-option>
+                            </div>
+                        </mat-select>
+                    </mat-form-field></td>
+
+                    <td><mat-form-field class="example-full-width">
+                        <input matInput placeholder="Input value" name="inputvalue" id="inputvalue" ngModel>
+                        </mat-form-field>
+                    </td>
+
+                    <label>Value to be returned</label>
+                   <div class="example-full-width" *ngFor="let muta of mutation; let j=index">
+                        <td> <div class="example-full-width " >
+                            <mat-checkbox  name="r{{mutation[j]}}" id="r{{mutation[j]}}" ngModel>{{mutation[j]}}</mat-checkbox>
+                            </div>
+                        </td>
+                    </div>
+
+                    <hr />
+
+                    <label>Mutation Block</label>
+
+                    <div class="example-full-width" *ngFor="let muta of mutation; let j=index">
+                        <td> <mat-form-field class="example-full-width " *ngIf="mutationtype[j]!='uid'" >
+                            <input matInput name="z{{mutation[j]}}" id="z{{mutation[j]}}" placeholder="{{mutation[j]}}" ngModel>
+                            </mat-form-field>
+                        </td>
+                    </div>
+                    <button class="btn btn-primary">Submit</button>
+                </form>
+                <div><h2>{{upsertMessage}}</h2></div>
+                <div (click)="tCollapse()" class="queryterminal" id="qTerminal" >
+                    <div class="notch"> 
+                        console <label style="font-size: 1.5vw;">{{symbol}}</label>
+                    </div>
+                    <div *ngFor="let message of upsertMessaget">
+                        {{message}}
+                    </div>
+                </div>
+            </div>
+
+            <div *ngSwitchCase="'Delete'">
+                <form #deleteForm="ngForm" (ngSubmit)="onSubmitDelete(deleteForm)">
+                    <h4>Select the node</h4>
+                    <td><mat-form-field class="example-full-width">
+                        <mat-label >Select Node 1 </mat-label>
+                        <mat-select name="Node1" id="Node1" ngModel>
+                            <mat-option *ngFor="let type of edgeQuerydata; let i=index"
+                            value="{{edgeQueryuid[i]}}">{{edgeQuerydata[i]}}
+                           </mat-option>
+                        </mat-select>  
+                    </mat-form-field></td>
+                    <h4>Predicates to be deleted</h4>
+                    <td> <div class="example-full-width " >
+                        <mat-checkbox  name="uid" id="uid" ngModel>uid(Selecting this will delete entire node with all its predicates)</mat-checkbox>
+                        </div>
+                    </td>
+                    <div class="example-full-width" *ngFor="let muta of mutation; let j=index">
+                         <td> <div class="example-full-width " >
+                             <mat-checkbox  name="r{{mutation[j]}}" id="r{{mutation[j]}}" ngModel>{{mutation[j]}}</mat-checkbox>
+                             </div>
+                         </td>
+                     </div>
+                    <button class="btn btn-primary">Submit</button>
+                </form>
+                <div><h2>{{deletEMessage}}</h2></div>
+                <div (click)="tCollapse()" class="queryterminal" id="qTerminal" >
+                    <div class="notch"> 
+                        console <label style="font-size: 1.5vw;">{{symbol}}</label>
+                    </div>
+                    <div *ngFor="let message of deleteMessaget">
+                        {{message}}
+                    </div>
+                </div>
+            </div>
+
+            <div *ngSwitchCase="'Bulk Upload'">
+                <div>
+                    <form #userForm="ngForm" class="textWid" (ngSubmit)="bulkUpload(userForm)">
+                        <h1>Upload File</h1>
+                        <!-- <mat-radio-group name="choice" [(ngModel)]="forUpload">
+                            <mat-radio-button value="google">
+                                Through google drive
+                            </mat-radio-button>
+                            <mat-radio-button value="server">
+                                If file on server
+                            </mat-radio-button>
+                        </mat-radio-group> -->
+                        <div *ngIf="forUpload==='google'">
+                            <form #uploadForm=ngForm (submit)="forGoogleUpload()">
+                                <div class="padBot">
+                                    <td class="example-full-width"><input type="text" required #name="ngModel" [(ngModel)]="googleUpload.rdfLink" [class.is-invalid]="name.invalid && name.touched"  class="form-control" name="rdfLink" class="form-control" placeholder="Drive link for rdf file"></td>
+                                    <td class="example-full-width"><input type="text" required #schemaLink="ngModel" [(ngModel)]="googleUpload.schemaLink" [class.is-invalid]="schemaLink.invalid && schemaLink.touched" class="form-control" name="schemaLink" placeholder="Drive link for schema file"></td>
+                                    <td><button class="btn btn-primary" type="submit">Submit</button></td>
+                                </div>
+                            </form>
+                        </div>
+                    </form>
+                </div>  
+                <div class="terminal" id="Terminal">
+                    <li style="list-style-type: none;" *ngFor="let output of TO">
+                        {{output}}
+                    </li>
+                    <p>{{TO}}</p>
+                </div>
+            </div>    
+            <div *ngSwitchDefault class="hmm">
+                <p><span>Welcome {{currentUser}} !!</span></p>
+            </div>
+        </div>
+    </div>   
+</div>

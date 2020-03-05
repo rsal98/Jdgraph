@@ -1,0 +1,58 @@
+<div class="outer">
+    <div class="middle">
+        <div class="inner" [@changeDivSize]=currentState>
+            <img src="assets/img/pic.png">
+            <div *ngIf="connectionDone">
+            <h1>Jdgraph</h1>
+            <form #info="ngForm" (ngSubmit)="onSubmit()" class="font">
+                <div class="formDiv">
+                    <input type="text" #userid="ngModel" name="userid" autocomplete="off" required  [(ngModel)]="userInfo.userid" [class.is-invalid]="userid?.invalid && userid.touched" placeholder="UserId" class="rounded">
+                    <div *ngIf="userid?.invalid && (userid.dirty || userid.touched)" class="errorMessage">
+                        <div *ngIf="userid.errors.required">
+                            Userid is required!!!!
+                        </div>
+                    </div>
+                </div>      
+                <div class="formDiv">
+                    <input type="password" #password="ngModel" required [(ngModel)]="userInfo.password" name="password" [class.is-invalid]="password?.invalid && password.touched" placeholder="Password" class="rounded">
+                    <div *ngIf="password?.invalid && (password.dirty || password.touched)">
+                        <div *ngIf="password.errors.required" class="errorMessage">
+                            Password is required!!!!
+                        </div>
+                    </div>
+                </div>
+                <div class="formLast">
+                    <button type="submit" [disabled]="!info.form.valid">Login</button>
+                </div>
+            </form>
+            <div *ngIf="showError" class="error">
+                {{errorMessage}}
+            </div>
+            <div class="formLast"></div>
+            </div>
+            <div *ngIf="!connectionDone">
+                <h1>Create Connection</h1>
+                <form #connCred="ngForm" (ngSubmit)="createConn()" class="font">
+                    <div class="formDiv">
+                        <input type="text" #ipAddr="ngModel" name="ip" autocomplete="off" autofocus="autofocus" required  [(ngModel)]="conn.ip" [class.is-invalid]="ipAddr?.invalid && ipAddr.touched" placeholder="IP Address" class="rounded">
+                        <div *ngIf="ipAddr?.invalid && (ipAddr.dirty || ipAddr.touched)" class="errorMessage">
+                            <div *ngIf="ipAddr.errors.required">
+                                IP Address is required!!!!
+                            </div>
+                        </div>
+                    </div>      
+                    <div class="formLast">
+                        <button type="submit">Connect</button>
+                    </div>
+                </form>
+                <div *ngIf="showConnErr" class="error">
+                    {{connectionError}}
+                </div> 
+                <div class="formLast"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

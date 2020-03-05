@@ -1,0 +1,103 @@
+.outer {
+    display: table;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+  }
+  
+  .middle {
+    display: table-cell;
+    vertical-align: middle;
+  }
+  
+  .inner {
+    padding-top: 30px;  
+    margin-left: auto;
+    margin-right: auto;
+    width: 10vw;
+    text-align: center ;
+    background-color: white;
+    border-radius: 25px;
+  }
+
+.formDiv{
+    padding-bottom: 20px;
+}
+
+.formLast{
+    padding-bottom: 30px;
+}
+
+.rounded{
+    border-radius: 80px;
+    border: 2px solid black;
+    padding: 20px; 
+    width: 200px;
+    height: 15px; 
+    color:black;
+}
+
+::-webkit-input-placeholder {
+    text-align: center;
+  }
+  
+  :-moz-placeholder { /* Firefox 18- */
+    text-align: center;  
+  }
+  
+  ::-moz-placeholder {  /* Firefox 19+ */
+    text-align: center;  
+  }
+  
+  :-ms-input-placeholder {  
+    text-align: center; 
+  }
+
+  button{
+      background-color: black;
+      border: 2px solid black;
+      color: white;
+      border-radius: 25px;
+      width: 100px;
+      height: 40px;
+  }
+
+  input{
+    text-align: center;
+  }
+
+  .error{
+    background-color: red;
+    color: white;
+    border: 2px solid red;
+    min-height: 20px;
+    font-size: 25px;
+    font-family: 'Bangers', cursive;
+  }
+
+  .errorMessage{
+    color: red;
+    font-family: 'Bangers', cursive;
+  }
+
+  h1{
+    font-family: 'Bangers', cursive;
+    color: black;
+  }
+
+  .font{
+    font-family: 'Merriweather Sans', sans-serif;
+  }
+
+  .out{
+    cursor: pointer;
+  }
+
+  img{
+    height: 20vw;
+  }
+
+  

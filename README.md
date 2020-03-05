@@ -1,4 +1,4 @@
-# Dgraph
+# Jdgraph
 ## Add Schema
 This function can be used to add schema in our data base. Example:
 

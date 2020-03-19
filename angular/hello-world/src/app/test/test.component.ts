@@ -24,7 +24,8 @@ import  { Edges } from '../edges'
 
 import { GoogleUpload } from '../google-upload';
 import * as Stomp from 'stompjs';
-import { ThrowStmt } from '@angular/compiler';
+import { ThrowStmt, flatten } from '@angular/compiler';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-test',
@@ -145,6 +146,7 @@ export class TestComponent implements OnInit {
     if(this.currentUser==="groot")
     {
       this.adminAccess=true
+      this.disableTerminal=false
     }
     else{
       this.adminAccess=false
@@ -157,11 +159,28 @@ export class TestComponent implements OnInit {
   edgeQueryuid=[]
   edgeQuerydata=[]
   mutationclasstype=[]
+  disableTerminal=true
   onClick(func)
   {
     this.action=func
-    if(func==="Query" || func==="Upsert" || func==="Define Type" || func==="Add Schema")
-    {
+    if(func==="Upsert" || func==="Define Type" || func==="Add Schema")
+    { this.disableTerminal=true
+      this.mutation.length=0
+      this.mutationtype.length=0
+      this.javaConn.schemapush().subscribe(data=>
+        {
+          this.example=data
+          let j=0
+          for(let i=0;i<this.example.schema.length;i++){
+            if(this.example.schema[i].predicate.substring(0,6)!="dgraph"){
+            this.mutation[j]=this.example.schema[i].predicate;
+            this.mutationtype[j]=this.example.schema[i].type;
+            j++;
+            }
+          }
+        })
+    }else if(func==="Query"){
+      this.disableTerminal=false
       this.mutation.length=0
       this.mutationtype.length=0
       this.javaConn.schemapush().subscribe(data=>
@@ -178,7 +197,7 @@ export class TestComponent implements OnInit {
         })
     } else if(func==="Add Data"){
       this.javaConn.schemapush().subscribe(data=>
-        {
+        { this.disableTerminal=true
           this.mutation.length=0
           this.mutationtype.length=0
           this.example=data
@@ -193,6 +212,7 @@ export class TestComponent implements OnInit {
         })
       //  this.mutationdata.push(this.mutation);
     }else if(func==="Add Data Using Type"){
+      this.disableTerminal=true
       this.mutation.length=0
       this.mutationtype.length=0
       this.mutationclasstype.length=0
@@ -214,6 +234,7 @@ export class TestComponent implements OnInit {
       //  this.mutationtdata.push(this.mutation);
     }
     else if(func==="Make Edges" || func==="Delete"){
+      this.disableTerminal=true
       this.edgeQueryuid.length=0;
       this.edgeQuerydata.length=0;
       this.javaConn.edgeQuery().subscribe(data=>
@@ -232,6 +253,7 @@ export class TestComponent implements OnInit {
       })
     }
     else if(func==="Bulk Upload"){
+      this.disableTerminal=false
       this.javaConn.shutDown().subscribe(data=>{
         console.log(data)
       })
@@ -253,8 +275,7 @@ export class TestComponent implements OnInit {
     this.googleUpload.rdfLink=""
     this.googleUpload.schemaLink=""
     this.TO=[]
-    this.symbol="-"
-    this.showTerminal=true
+    this.onChange()
   }
   displayopt(opt){
     this.display=opt
@@ -554,10 +575,11 @@ export class TestComponent implements OnInit {
     this.mutationtdata.splice(index);
   }
 
-  schemaMessaget=[]
+  Messaget=[]
   onSubmitSchema(){
+    this.Messaget.length=0;
       this.javaConn.addSchema(this.dataarray).subscribe(data => {
-        this.schemaMessaget=data.split('\n')
+        this.Messaget=data.split('\n')
         this.schemaMessage="Schema Added"
       })
       this.dataarray.length=0
@@ -568,11 +590,11 @@ export class TestComponent implements OnInit {
   }
 
   edgeMessage=""
-  edgeMessaget=""
   onSubmitEdge(form: NgForm){
   //  console.log(form.value)
+  this.Messaget.length=0;
     this.javaConn.addEdge(form.value).subscribe(data => {
-      this.edgeMessaget=data
+      this.Messaget[0]=data
       this.edgeMessage="Edge Added"
     })
     form.reset()
@@ -580,10 +602,10 @@ export class TestComponent implements OnInit {
 }
 
 mutationMessage=""
-mutationMessaget=[]
   onSubmitMutation(form: NgForm){
+    this.Messaget.length=0;
     this.javaConn.addMutation(form.value).subscribe(data => {
-      this.mutationMessaget=data.split('\n')
+      this.Messaget=data.split('\n')
       this.mutationMessage="Data Added"
     })
     this.mutationdata.length=0
@@ -591,12 +613,11 @@ mutationMessaget=[]
   }
 
   tmutationMessage=""
-  tmutationMessaget=[]
   onSubmitTMutation(form: NgForm){
    // console.log(form.value)
-   
+   this.Messaget.length=0;
     this.javaConn.addTMutation(form.value).subscribe(data => {
-      this.tmutationMessaget=data.split('\n')
+      this.Messaget=data.split('\n')
       this.tmutationMessage="Data Added"
     })
     this.mutationtdata.length=0
@@ -606,10 +627,9 @@ mutationMessaget=[]
 
 
 typeMessage=""
-typeMessaget=[]
   onSubmitType(form: NgForm){
     this.javaConn.addType(form.value).subscribe(data => {
-      this.typeMessaget=data.split('\n')
+      this.Messaget=data.split('\n')
       this.typeMessage="Type Added"
     })
     form.reset()
@@ -725,10 +745,10 @@ edgedata=[]
 
 TO=[]
 deletEMessage=""
-deletEMessaget=[]
 onSubmitDelete(form: NgForm){
+  this.Messaget.length=0;
    this.javaConn.delete(form.value).subscribe(data => {
-     this.deletEMessaget=data.split('\n')
+     this.Messaget=data.split('\n')
      this.deletEMessage="Deleted"
    })
    form.reset()
@@ -743,11 +763,12 @@ bulkUpload(form : NgForm){
 }
 
 upsertMessage=""
-upsertMessaget=[]
+
   onSubmitUpsert(form: NgForm){
    // console.log(form.value)
+   this.Messaget.length=0;
     this.javaConn.addUpsert(form.value).subscribe(data => {
-      this.upsertMessaget=data.split('\n')
+      this.Messaget=data.split('\n')
       this.upsertMessage="Data Updated"
     })
     form.reset()
@@ -759,9 +780,9 @@ upsertMessaget=[]
     this.ws = Stomp.over(socket);
     let that = this;
     this.ws.connect({}, function(frame) {
-      that.ws.subscribe("/errors", function(message) {
+     ; that.ws.subscribe("/errors", function(message) {
         alert("Error " + message.body);
-      });
+      })
       that.ws.subscribe("/topic/messages", function(message) {
         that.TO.push(message.body)
       });
@@ -782,14 +803,16 @@ upsertMessaget=[]
       document.getElementById("LeftSideMenu").style.width="0";
     }
     if(document.getElementById("InnerRight")){
-      document.getElementById("InnerRight").style.width="55vw";
+      document.getElementById("InnerRight").style.width="72vw";
     }
     if(document.getElementById("mynetwork")){
-      document.getElementById("mynetwork").style.width="800px";
-      document.getElementById("mynetwork").style.height="700px";
+      document.getElementById("mynetwork").style.width="70vw";
     }
     if(document.getElementById("Terminal")){
       document.getElementById("Terminal").style.width="85vw";
+    }
+    if(document.getElementById("qTerminal")){
+      document.getElementById("qTerminal").style.width="100vw";
     }
     }else{
       this.showArrow=!this.showArrow
@@ -799,32 +822,39 @@ upsertMessaget=[]
         document.getElementById("LeftSideMenu").style.width="17.5";
       }
       if(document.getElementById("InnerRight")){
-        document.getElementById("InnerRight").style.width="40vw";
+        document.getElementById("InnerRight").style.width="55vw";
       }
       if(document.getElementById("mynetwork")){
-        document.getElementById("mynetwork").style.width="600px";
-        document.getElementById("mynetwork").style.height="600px";
+        document.getElementById("mynetwork").style.width="52vw";
       }
       if(document.getElementById("Terminal")){
         document.getElementById("Terminal").style.width="70vw";
       }
+      if(document.getElementById("qTerminal")){
+        document.getElementById("qTerminal").style.width="82.5vw";
+      }
     }  
     } 
-  showTerminal=true
-  symbol="-"
+  showTerminal=false
+  symbol="˄"
     tCollapse(){
       if(this.showTerminal)
       {
-        document.getElementById("qTerminal").style.height="17vh";
-        this.symbol="+"
+        document.getElementById("qTerminal").style.height="4vh";
+        this.symbol="˄"
         this.showTerminal=false
       }
       else
       {
-        document.getElementById("qTerminal").style.height="40vh";
-        this.symbol="-"
+        document.getElementById("qTerminal").style.height="30vh";
+        this.symbol="˅"
         this.showTerminal=true
       }
+    }
+    onChange(){
+      document.getElementById("qTerminal").style.height="4vh";
+        this.symbol="˄"
+        this.showTerminal=false
     }
 }
 

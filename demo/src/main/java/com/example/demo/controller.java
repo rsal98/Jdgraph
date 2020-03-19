@@ -27,6 +27,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+
 import io.dgraph.DgraphClient;
 import io.dgraph.DgraphGrpc;
 import io.dgraph.Transaction;
@@ -44,8 +45,9 @@ public class controller {
 	
 	private DgraphClient dgraphClient;
 	private String ipAddr;
-	private String adminPass;	
-	
+	private String adminPass;
+	@Autowired
+	private userConfig config;
 	@Autowired
 	private WebSocketController socket;
 	
@@ -111,18 +113,17 @@ public class controller {
 	
 	@GetMapping("/shutdown")
 	public String aplhaShut() throws UnirestException {
-		String command="./makeFile.sh rohit@"+this.ipAddr;
+		System.out.println(config.getVmId());
+		String command="./bashFiles/makeFile.sh "+config.getVmId()+"@"+this.ipAddr+" "+config.getVmPass();
 		String hmm=runShellScript(command);
-		command="./forRun.sh rohit@"+this.ipAddr + " 123456";
+		command="./bashFiles/forRun.sh "+config.getVmId()+"@"+this.ipAddr + " "+config.getVmPass();
 		return runShellScript(command);
 	}
 	@PostMapping("/addUser")
 	public String addNewUser(@RequestBody user newUser)
 	{
-		String command="./commands.sh "+newUser.getUserid()+" "+this.adminPass+" "+newUser.getPass()+" "+newUser.getRepass()+" "+this.ipAddr;
-		String command2="./assignUser.sh "+newUser.getUserid()+" "+this.adminPass+" "+"guardians"+" "+this.ipAddr;
+		String command="./bashFiles/commands.sh "+newUser.getUserid()+" "+this.adminPass+" "+newUser.getPass()+" "+newUser.getRepass()+" "+this.ipAddr;
 		String hmm=runShellScript(command);
-		String hmm1=runShellScript(command2);
 		return hmm;
 	}
 	
@@ -151,31 +152,28 @@ public String runShellScriptUpload(String command) throws Exception {
 	{
 		String rdfId=links.getRdfLink().substring(links.getRdfLink().lastIndexOf("=")+1, links.getRdfLink().length());
 		String schemaId=links.getSchemaLink().substring(links.getSchemaLink().lastIndexOf("=")+1, links.getSchemaLink().length());
-		String command="./fileDownload.sh rohit@"+this.ipAddr+" 123456 "+rdfId;
+		String command="./bashFiles/fileDownload.sh "+config.getVmId()+"@"+this.ipAddr+" "+config.getVmPass()+" rdfId";
 		String hmm=runShellScriptUpload(command);
-		System.out.println("rdf downloaded");
-		command="./fileDownload1.sh rohit@"+this.ipAddr+" 123456 "+schemaId;
+		command="./bashFiles/fileDownload1.sh rohit@"+this.ipAddr+" 123456 "+schemaId;
 		hmm=runShellScriptUpload(command);
-		System.out.println("schema downloaded");
-		command="./loader.sh rohit@"+this.ipAddr;
+		command="./bashFiles/loader.sh rohit@"+this.ipAddr;
 		hmm=runShellScriptUpload(command);
-		command="./startAlpha.sh rohit@"+this.ipAddr;
+		command="./bashFiles/startAlpha.sh rohit@"+this.ipAddr;
 		hmm=runShellScriptUpload(command);
-		System.out.println("file deleted");
 		return hmm;
 	}
 	
 	@PostMapping("/deleteUser")
 	public String deleteUser(@RequestBody forDelete user)
 	{
-		String command="./forDelete.sh "+this.adminPass+" "+user.getUserid()+" "+this.ipAddr;
+		String command="./bashFiles/forDelete.sh "+this.adminPass+" "+user.getUserid()+" "+this.ipAddr;
 		return runShellScript(command);
 	}
 	
 	@PostMapping("/User")
 	public String showUser(@RequestBody forDelete user)
 	{
-		String command="./user.sh "+this.adminPass+" "+user.getUserid()+" "+this.ipAddr;
+		String command="./bashFiles/user.sh "+this.adminPass+" "+user.getUserid()+" "+this.ipAddr;
 		String sline="";
 		try {
 		    Process process = Runtime.getRuntime().exec(command);
@@ -198,28 +196,28 @@ public String runShellScriptUpload(String command) throws Exception {
 	@PostMapping("/updateUser")
 	public String updateUser(@RequestBody user updatePass)
 	{
-		String command="./forUpdate.sh "+updatePass.getUserid()+" "+this.adminPass+" "+updatePass.getPass()+" "+updatePass.getRepass()+" "+this.ipAddr;
+		String command="./bashFiles/forUpdate.sh "+updatePass.getUserid()+" "+this.adminPass+" "+updatePass.getPass()+" "+updatePass.getRepass()+" "+this.ipAddr;
 		return runShellScript(command);
 	}
 	
 	@PostMapping("/deleteGroup")
 	public String deleteGroup(@RequestBody groupInfo group)
 	{
-		String command="./deleteGroup.sh "+group.getGroupId()+" "+this.adminPass+" "+this.ipAddr;
+		String command="./bashFiles/deleteGroup.sh "+group.getGroupId()+" "+this.adminPass+" "+this.ipAddr;
 		return runShellScript(command);
 	}
 	
 	@PostMapping("/usertogroup")
 	public String assignUser(@RequestBody assignInfo user)
 	{
-		String command="./assignUser.sh "+user.getUserId()+" "+this.adminPass+" "+user.getGroupId()+" "+this.ipAddr;
+		String command="./bashFiles/assignUser.sh "+user.getUserId()+" "+this.adminPass+" "+user.getGroupId()+" "+this.ipAddr;
 		return runShellScript(command);
 	}
 	
 	@PostMapping("/groupInfo")
 	public String groupInfo(@RequestBody groupInfo group)
 	{
-		String command="./groupInfo.sh "+group.getGroupId()+" "+this.adminPass+" "+this.ipAddr;
+		String command="./bashFiles/groupInfo.sh "+group.getGroupId()+" "+this.adminPass+" "+this.ipAddr;
 		String sline="";
 		try {
 		    Process process = Runtime.getRuntime().exec(command);
@@ -241,7 +239,7 @@ public String runShellScriptUpload(String command) throws Exception {
 	@PostMapping("/addGroup")
 	public String addGroup(@RequestBody groupCred group)
 	{
-		String command="./groupAdd.sh "+group.getGroupId()+" "+this.adminPass+" "+this.ipAddr;
+		String command="./bashFiles/groupAdd.sh "+group.getGroupId()+" "+this.adminPass+" "+this.ipAddr;
 		char[] permi=new char[3];
 		if(group.isReadPermi())
 			permi[0]='1';
@@ -266,7 +264,7 @@ public String runShellScriptUpload(String command) throws Exception {
 			return sline;
 		}
 		else	{
-			command="./givePermi.sh "+group.getGroupId()+" "+this.adminPass+" "+group.getPredName()+" "+str1+" "+this.ipAddr;
+			command="./bashFiles/givePermi.sh "+group.getGroupId()+" "+this.adminPass+" "+group.getPredName()+" "+str1+" "+this.ipAddr;
 			System.out.println(command);
 			try {
 			    Process process = Runtime.getRuntime().exec(command);

@@ -47,14 +47,14 @@
     font-size: 1vw;
 }
 .rightSide{
-    height: 100%;
+    height: 80vh;
     width: 82.5vw;
     position: fixed;
     z-index: 1;
     top: 2vw;
     overflow-y:scroll;
     padding-top: 0.5vw;
-    padding-left: 5vw;
+    padding-left: 1vw;
     right:0;
     text-align: center;
     margin-top: 5vw;
@@ -62,7 +62,7 @@
 }
 
 .innerLeft{
-  width: 32vw;
+  width: 25vw;
   position: fixed;
   z-index: 1;
   height: 100%;
@@ -80,13 +80,13 @@ form{
   font-family: Arial, Helvetica, sans-serif;
 }
 .innerRight{
-  width: 40vw;
+  width:55vw;
   position: fixed;
   z-index: 1;
   right: 0;
   overflow-y: scroll;
   font-family: Arial, Helvetica, sans-serif;
-  transition: 0.5s;
+  transition: 0.7s;
 }
 
 th{
@@ -216,10 +216,10 @@ td {
   color: red;
 }
 .mynetwork {
-  width: 600px;
-  height: 600px;
+  width: 52vw;
+  height: 75vh;
   border: 1px solid lightgray;
-  transition: 0.5s;
+  transition: 0.7s;
 }
 
 .terminal{
@@ -235,12 +235,12 @@ td {
   background: black;
   color: white;
   width: 82.5vw;
-  height: 40vh;
+  height: 4vh;
   /* text-align: left; */
   transition: 0.7s;
   bottom: 0;
-  left: 0;
-  position:absolute;
+  right: 0;
+  position: fixed;
   text-align: center;
 }
 
@@ -253,5 +253,21 @@ td {
   border-radius: 0 0 10px 10px;
   color: black;
   font-size: 1.3vw;
+  cursor: pointer;
 }
 
+.terminaltext{
+  text-align: left;
+}
+
+.buton{
+  color: black;
+  background-color: #00bfff;
+  padding-left: 0.1cm;
+  padding-right: 0.1cm;
+  border-radius: 4px;
+}
+.buton:hover{
+  color: white;
+  background-color: black;
+}

@@ -12,6 +12,7 @@ import { FormControl,FormGroup } from '@angular/forms';
 import { JavaconnService } from '../javaconn.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Connection } from '../connection'
+import { local } from 'd3';
 @Component({
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
@@ -54,6 +55,14 @@ export class LoginPageComponent implements OnInit {
     setTimeout(()=>{
       this.currentState = this.currentState === 'initial' ? 'final' : 'initial';
     },0)  
+
+    if(localStorage.getItem('ip')===null){
+      this.conn.ip=""
+    }
+    else
+    {
+      this.conn.ip=localStorage.getItem('ip')
+    }
   }
 
   onSubmit  (){
@@ -72,10 +81,12 @@ export class LoginPageComponent implements OnInit {
   }
   createConn()
   {
+    console.log(localStorage.getItem('ip'))
     this.javaConn.createConnection(this.conn).subscribe(data=>
       {
         if(data==="connected"){
           this.connectionDone=!this.connectionDone
+          localStorage.setItem('ip',this.conn.ip)
         }
         else{
           this.showConnErr=true

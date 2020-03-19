@@ -25,12 +25,9 @@
     </div>
     <div class="leftSide"  *ngIf="!adminAccess">
         <ul class="leftPane" id="LeftSide">
-            <li><a (click)="showUserOperations()" class={{jj}}>&#9776;Operations</a></li>
-            <div class="list" id="LeftSideMenu" *ngIf="userOp">
                 <li  *ngFor="let operation of userOperations" (click)="onClick(operation)">
                     <a>{{ operation }}</a>
                 </li>
-            </div>
             <!-- <div style="cursor: pointer" (click)="collapse()" class="hideButton"><h1>←</h1></div> -->
         </ul>   
     </div>
@@ -39,7 +36,7 @@
         <div [ngSwitch]="action">
             <div *ngSwitchCase="'Create New User'">
                 <div class="innerLeft1">
-                    <div class="myForm">
+                    <div class="myForm" class="textWid">
                         <h1 style="float: left;padding-left: 3vw;">Enter User Info</h1>
                         <form #userForm="ngForm" class="textWid" (ngSubmit)="onSubmit()">
                             <div class="col">
@@ -145,7 +142,7 @@
             </div>
             <div *ngSwitchCase="'Show User Info'">
                 <div class="innerLeft1">
-                    <div class="myForm">
+                    <div class="myForm" class="textWid">
                         <form #userForm="ngForm" class="textWid" (ngSubmit)="userInfo()">
                             <h1>Enter User Id</h1>
                             <div class="col">
@@ -184,7 +181,7 @@
             </div>
             <div *ngSwitchCase="'Update User Password'">
                 <div class="innerLeft1">    
-                    <div class="myForm">
+                    <div class="myForm" class="textWid">
                         <h1 style="float: left;padding-left: 3vw;">Enter User Info</h1>
                         <form #userForm="ngForm" class="textWid" (ngSubmit)="onUpdate()">
                             <div class="col">
@@ -247,7 +244,7 @@
             </div>        
             <div *ngSwitchCase="'Create New Group'">
                 <div class="innerLeft1">
-                    <div class="myForm">
+                    <div class="myForm" class="textWid">
                         <form #userForm="ngForm" class="textWid" (ngSubmit)="forGroupCred()">
                             <h1>Enter Group Info</h1>
                             <div class="col">
@@ -318,7 +315,7 @@
             </div>
             <div *ngSwitchCase="'Group Info'">
                 <div class="innerLeft1">
-                    <div class="myForm">
+                    <div class="myForm" class="textWid">
                         <form #userForm="ngForm" class="textWid" (ngSubmit)="showGroupInfo()">
                             <h1>Enter Group Id</h1>
                             <div class="col">
@@ -346,12 +343,12 @@
                         <div *ngFor="let obj of dataarray; let i=index">
                                 <form class="example-full-width myForm" ><tr>
                                     <td><mat-form-field class="example-full-width">
-                                    <input matInput placeholder="Predicate" name="predicate{{i}}" [(ngModel)]="obj.predicate">
+                                    <input matInput placeholder="Predicate" required name="predicate{{i}}" [(ngModel)]="obj.predicate">
                                     </mat-form-field></td>
     
                                     <td><mat-form-field class="example-full-width">
                                         <mat-label >Type</mat-label>
-                                        <mat-select name="attrtype{{i}}" [(ngModel)]="obj.attrtype">
+                                        <mat-select name="attrtype{{i}}" required [(ngModel)]="obj.attrtype">
                                             <mat-option *ngFor="let type of types"
                                             value="{{type.id}}">{{type.name}}</mat-option>
                                         </mat-select>
@@ -409,7 +406,7 @@
                                 </tr>
                             </form> 
                         </div>
-                        <span (click)="onAdd()" class=" btn btn-success">+</span>
+                        <span (click)="onAdd()" class=" btn btn-success">+</span>&nbsp;
                         <button class="btn btn-primary">Submit</button>
                     </form>
                     <div><h2>{{schemaMessage}}</h2></div>
@@ -436,14 +433,6 @@
                         </tbody>
                     </table>
                 </div>
-                <div (click)="tCollapse()" class="queryterminal" id="qTerminal" >
-                    <div class="notch"> 
-                        console <label style="font-size: 1.5vw;">{{symbol}}</label>
-                    </div>
-                    <div *ngFor="let message of schemaMessaget">
-                        {{message}}
-                    </div>
-                </div>
             </div>
             <div *ngSwitchCase="'Define Type'">
                 <div class="myForm">
@@ -452,7 +441,7 @@
     
                         <div>
                             <td><mat-form-field class="example-full-width">
-                                    <input matInput placeholder="Define a type" name="typevalue" id="typevalue" ngModel>
+                                    <input matInput placeholder="Define a type" required name="typevalue" id="typevalue" ngModel>
                                 </mat-form-field>
                             </td>
                         </div>
@@ -474,14 +463,6 @@
                     </form>
                     <div><h2>{{typeMessage}}</h2></div>
                 </div>
-                <div (click)="tCollapse()" class="queryterminal" id="qTerminal" >
-                    <div class="notch"> 
-                        console <label style="font-size: 1.5vw;">{{symbol}}</label>
-                    </div>
-                    <div *ngFor="let message of typeMessaget">
-                        {{message}}
-                    </div>
-                </div>
             </div>
             <div *ngSwitchCase="'Add Data'">
                 <div class="myForm">
@@ -501,19 +482,11 @@
                         </div>
                            
                         <div class="formDiv">
-                            <span (click)="onAddm()" class=" btn btn-success">Follows</span>
+                            <span (click)="onAddm()" class=" btn btn-success">Follows</span>&nbsp;
                             <button class="btn btn-primary" >Submit</button>
                         </div>
                     </form>
                     <div><h2>{{mutationMessage}}</h2></div>
-                </div>
-                <div (click)="tCollapse()" class="queryterminal" id="qTerminal" >
-                    <div class="notch"> 
-                        console <label style="font-size: 1.5vw;">{{symbol}}</label>
-                    </div>
-                    <div *ngFor="let message of mutationMessaget">
-                        {{message}}
-                    </div>
                 </div>
             </div>
             <div *ngSwitchCase="'Add Data Using Type'">
@@ -525,7 +498,7 @@
                             <td><div>
                                 <td><mat-form-field class="example-full-width">
                                     <mat-label >Choose type</mat-label>
-                                    <mat-select name="{{i}}typevalue" id="{{i}}typevalue" ngModel>
+                                    <mat-select name="{{i}}typevalue" required id="{{i}}typevalue" ngModel>
                                         <mat-option *ngFor="let type of mutationclasstype; let l=index"
                                        value ="{{mutationclasstype[l]}}">{{mutationclasstype[l]}}</mat-option>
                                     </mat-select>
@@ -554,19 +527,11 @@
                         </div>
                            
                         <div class="example-full-width">
-                            <span (click)="onAddtm()"  class=" btn btn-success">+</span>
+                            <span (click)="onAddtm()"  class=" btn btn-success">+</span>&nbsp;
                             <button class="btn btn-primary" >Submit</button>
                         </div>
                     </form>
                     <div><h2>{{tmutationMessage}}</h2></div>
-                </div>
-                <div (click)="tCollapse()" class="queryterminal" id="qTerminal" >
-                    <div class="notch"> 
-                        console <label style="font-size: 1.5vw;">{{symbol}}</label>
-                    </div>
-                    <div *ngFor="let message of tMutationMessaget">
-                        {{message}}
-                    </div>
                 </div>
             </div>
             <div *ngSwitchCase="'Make Edges'">
@@ -574,7 +539,7 @@
                     <form #edgeForm="ngForm" (ngSubmit)="onSubmitEdge(edgeForm)">
                         <td><mat-form-field class="example-full-width">
                             <mat-label >Select Node 1 </mat-label>
-                            <mat-select name="Node1" id="Node1" ngModel>
+                            <mat-select name="Node1" required id="Node1" ngModel>
                                 <mat-option *ngFor="let type of edgeQuerydata; let i=index"
                                 value="{{edgeQueryuid[i]}}">{{edgeQuerydata[i]}}
                                </mat-option>
@@ -583,7 +548,7 @@
 
                         <td><mat-form-field class="example-full-width">
                             <mat-label >Select connection type</mat-label>
-                            <mat-select name="ctype" id="ctype" ngModel>
+                            <mat-select name="ctype" required id="ctype" ngModel>
                                 <div *ngFor="let muta of mutation;let i=index">
                                 <mat-option *ngIf="mutationtype[i]=='uid'"
                                 value="{{mutation[i]}}">{{mutation[i]}}
@@ -594,7 +559,7 @@
 
                         <td><mat-form-field class="example-full-width">
                             <mat-label >Select Node 2 </mat-label>
-                            <mat-select name="Node2" id="Node2" ngModel>
+                            <mat-select name="Node2" required id="Node2" ngModel>
                                 <mat-option *ngFor="let type of edgeQuerydata; let i=index"
                                 value="{{edgeQueryuid[i]}}">{{edgeQuerydata[i]}}
                                </mat-option>
@@ -604,12 +569,6 @@
                         <button class="btn btn-primary">Submit</button>
                     </form>
                     <div><h2>{{edgeMessage}}</h2></div>
-                    <div (click)="tCollapse()" class="queryterminal" id="qTerminal" >
-                        <div class="notch"> 
-                            console <label style="font-size: 1.5vw;">{{symbol}}</label>
-                        </div>
-                            {{edgeMessaget}}
-                    </div>
                 </div>
             </div>
             <div *ngSwitchCase="'Query'">
@@ -619,7 +578,7 @@
                         <div>
                             <td><mat-form-field class="example-full-width">
                                 <mat-label >Query type </mat-label>
-                                <mat-select name="qtype" id="qtype" ngModel>
+                                <mat-select name="qtype" required id="qtype" ngModel>
                                     <mat-option *ngFor="let type of qtypes"
                                     value="{{type.id}}">{{type.name}}</mat-option>
                                 </mat-select>  
@@ -628,7 +587,7 @@
                         <div>
                             <td><mat-form-field class="example-full-width">
                                 <mat-label >choose predicate</mat-label>
-                                <mat-select name="comparator" id="comparator" ngModel>
+                                <mat-select name="comparator" required id="comparator" ngModel>
                                     <div *ngFor="let muta of mutation;let i=index">
                                     <mat-option *ngIf="mutationtype[i]!='uid'"
                                     value="{{mutation[i]}}">{{mutation[i]}}
@@ -656,8 +615,8 @@
                 </div>
                 <div class="innerRight" id="InnerRight">
                     <h1>Query Output</h1>
-                    <td><div (click)="displayopt('graph')">Graph</div></td>
-                    <td><div (click)="displayopt('table')">Table</div></td>
+                    <td><div class="buton" (click)="displayopt('graph')">Graph</div></td>
+                    <td><div class="buton" (click)="displayopt('table')">Table</div></td>
                     <div [ngSwitch]="display">
                         <div *ngSwitchCase="'graph'">
                             <div class="mynetwork" id="mynetwork"></div>
@@ -693,7 +652,7 @@
                     <label>Query block</label>
                     <td><mat-form-field class="example-full-width">
                         <mat-label >choose predicate</mat-label>
-                        <mat-select name="comparator" id="comparator" ngModel>
+                        <mat-select name="comparator" required id="comparator" ngModel>
                             <div *ngFor="let muta of mutation;let i=index">
                             <mat-option *ngIf="mutationtype[i]!='uid'"
                             value="{{mutation[i]}}">{{mutation[i]}}
@@ -703,7 +662,7 @@
                     </mat-form-field></td>
 
                     <td><mat-form-field class="example-full-width">
-                        <input matInput placeholder="Input value" name="inputvalue" id="inputvalue" ngModel>
+                        <input matInput placeholder="Input value" name="inputvalue" required id="inputvalue" ngModel>
                         </mat-form-field>
                     </td>
 
@@ -728,14 +687,6 @@
                     <button class="btn btn-primary">Submit</button>
                 </form>
                 <div><h2>{{upsertMessage}}</h2></div>
-                <div (click)="tCollapse()" class="queryterminal" id="qTerminal" >
-                    <div class="notch"> 
-                        console <label style="font-size: 1.5vw;">{{symbol}}</label>
-                    </div>
-                    <div *ngFor="let message of upsertMessaget">
-                        {{message}}
-                    </div>
-                </div>
             </div>
 
             <div *ngSwitchCase="'Delete'">
@@ -743,7 +694,7 @@
                     <h4>Select the node</h4>
                     <td><mat-form-field class="example-full-width">
                         <mat-label >Select Node 1 </mat-label>
-                        <mat-select name="Node1" id="Node1" ngModel>
+                        <mat-select name="Node1" required id="Node1" ngModel>
                             <mat-option *ngFor="let type of edgeQuerydata; let i=index"
                             value="{{edgeQueryuid[i]}}">{{edgeQuerydata[i]}}
                            </mat-option>
@@ -759,18 +710,10 @@
                              <mat-checkbox  name="r{{mutation[j]}}" id="r{{mutation[j]}}" ngModel>{{mutation[j]}}</mat-checkbox>
                              </div>
                          </td>
-                     </div>
+                    </div>
                     <button class="btn btn-primary">Submit</button>
                 </form>
                 <div><h2>{{deletEMessage}}</h2></div>
-                <div (click)="tCollapse()" class="queryterminal" id="qTerminal" >
-                    <div class="notch"> 
-                        console <label style="font-size: 1.5vw;">{{symbol}}</label>
-                    </div>
-                    <div *ngFor="let message of deleteMessaget">
-                        {{message}}
-                    </div>
-                </div>
             </div>
 
             <div *ngSwitchCase="'Bulk Upload'">
@@ -807,5 +750,14 @@
                 <p><span>Welcome {{currentUser}} !!</span></p>
             </div>
         </div>
+        <div *ngIf="disableTerminal" (click)="tCollapse()" class="queryterminal" id="qTerminal" >
+            <div class="notch"> 
+                console <label style="font-size: 1.5vw;">{{symbol}}</label>
+            </div>
+            <div class="terminaltext" *ngFor="let message of Messaget">
+                {{message}}
+            </div>
+        </div>
     </div>   
+
 </div>

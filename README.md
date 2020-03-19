@@ -1,4 +1,15 @@
-# Jdgraph
+# Dgraph
+
+## Steps to get you started
+
+1. Git clone the repository.
+2. Install Angular using the link : https://www.codingforentrepreneurs.com/blog/angular-setup-guide/
+3. Install Spring using the link : https://www.codejava.net/ides/eclipse/install-spring-tool-suite-for-existing-eclipse-ide
+4. Install all the node modules using npm install.
+5. Start the node server using ng serve or npm start.
+6. Start the spring application.
+7. Hola! you are ready to go. Have fun exploring all the features.
+
 ## Add Schema
 This function can be used to add schema in our data base. Example:
 
@@ -89,5 +100,3 @@ This can be used to assign a user to a group.
 ## Group Info
 
 This can be used to retrieve information about the group.
-
-
